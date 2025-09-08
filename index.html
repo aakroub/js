@@ -3,348 +3,294 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Video Clipper - محرر الفيديو بالذكاء الاصطناعي</title>
-    
-    <!-- Tailwind CSS CDN -->
+    <title>JS-Quest: رحلتك لتعلم جافاسكريبت</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
-    
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide-react@0.292.0/dist/umd/lucide.min.js"></script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* استخدام الخط المخصص لجميع العناصر */
         body {
             font-family: 'Cairo', sans-serif;
-            background-color: #0F172A; /* slate-900 */
-            color: #F8FAFC; /* slate-50 */
+            scrollbar-width: thin;
+            scrollbar-color: #4a5568 #2d3748;
         }
-
-        /* تصميم مخصص لشريط التمرير */
-        ::-webkit-scrollbar {
+        body::-webkit-scrollbar {
             width: 8px;
         }
-        ::-webkit-scrollbar-track {
-            background: #1E293B; /* slate-800 */
+        body::-webkit-scrollbar-track {
+            background: #2d3748;
         }
-        ::-webkit-scrollbar-thumb {
-            background: #4F46E5; /* indigo-600 */
+        body::-webkit-scrollbar-thumb {
+            background-color: #4a5568;
             border-radius: 10px;
+            border: 2px solid #2d3748;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #6366F1; /* indigo-500 */
+        .code-block {
+            background-color: #1a202c;
+            border: 1px solid #4a5568;
+            border-radius: 8px;
+            padding: 16px;
+            font-family: 'Courier New', Courier, monospace;
+            direction: ltr;
+            text-align: left;
         }
-        
-        /* تأثير التوهج للزر الرئيسي */
-        .glow-button {
-            position: relative;
-            overflow: hidden;
+        .console-output {
+            background-color: #1a202c;
+            border: 1px solid #4a5568;
+            border-radius: 8px;
+            min-height: 100px;
+            padding: 16px;
+            font-family: 'Courier New', Courier, monospace;
+            direction: ltr;
+            text-align: left;
+            white-space: pre-wrap;
+            word-wrap: break-word;
         }
-        .glow-button::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 300%;
-            height: 300%;
-            background: radial-gradient(circle, rgba(167, 139, 250, 0.4) 0%, rgba(167, 139, 250, 0) 70%);
-            transform: translate(-50%, -50%);
-            transition: opacity 0.5s ease-in-out;
-            opacity: 0;
-            pointer-events: none;
+        .console-output .error {
+            color: #f56565;
         }
-        .glow-button:hover::before {
-            opacity: 1;
+        .console-output .success {
+            color: #48bb78;
         }
-
-        /* الرسوم المتحركة لدوار التحميل */
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+        .lesson-item.locked {
+            color: #718096;
+            cursor: not-allowed;
         }
-        .spinner {
-            animation: spin 1s linear infinite;
+        .lesson-item.locked .lock-icon {
+            display: inline-block;
         }
-
-        /* الرسوم المتحركة لظهور العناصر */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .lesson-item .lock-icon {
+            display: none;
         }
-        .fade-in {
-            animation: fadeIn 0.5s ease-out forwards;
-        }
-
     </style>
 </head>
-<body class="antialiased">
+<body class="bg-gray-900 text-gray-200">
 
-    <div id="app" class="min-h-screen flex flex-col p-4 md:p-8">
+    <div id="app" class="flex flex-col md:flex-row h-screen">
         
-        <!-- === Header === -->
-        <header class="flex justify-between items-center mb-12">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center">
-                    <i data-lucide="film" class="text-white"></i>
+        <!-- Sidebar -->
+        <aside class="w-full md:w-1/4 bg-gray-800 p-6 overflow-y-auto border-l-2 border-cyan-500">
+            <h1 class="text-3xl font-bold text-cyan-400 mb-2">JS-Quest</h1>
+            <p class="text-gray-400 mb-6">مسارك لتعلم جافاسكريبت</p>
+            
+            <div class="mb-6 bg-gray-700 p-4 rounded-lg">
+                <h2 class="text-lg font-semibold text-gray-300">مستواك الحالي</h2>
+                <div class="flex justify-between items-center mt-2">
+                    <span id="level" class="text-cyan-400 font-bold text-xl">مبتدئ</span>
+                    <span id="points" class="bg-cyan-500 text-gray-900 font-bold py-1 px-3 rounded-full">0 نقطة</span>
                 </div>
-                <h1 class="text-2xl font-bold text-white">AI Video Clipper</h1>
             </div>
-            <button class="hidden md:inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-slate-800 rounded-md hover:bg-slate-700 transition-colors">
-                <i data-lucide="user-circle" class="w-4 h-4"></i>
-                تسجيل الدخول
-            </button>
-        </header>
 
-        <main class="flex-grow flex flex-col items-center justify-center">
-            
-            <!-- === Main Form Section === -->
-            <section id="form-section" class="w-full max-w-3xl text-center">
-                <h2 class="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-600 mb-4">
-                    حوّل فيديوهاتك الطويلة إلى مقاطع ذهبية
-                </h2>
-                <p class="text-slate-400 text-lg mb-10">
-                    الصق رابط يوتيوب، ودع الذكاء الاصطناعي يصنع لك مقاطع قصيرة جاهزة للانتشار الفيروسي.
-                </p>
+            <h2 class="text-2xl font-semibold mb-4 border-b-2 border-gray-700 pb-2">الدروس</h2>
+            <ul id="lessons-list" class="space-y-2">
+                <!-- Lessons will be dynamically inserted here -->
+            </ul>
+        </aside>
 
-                <form id="video-form" class="flex flex-col md:flex-row items-center gap-3 bg-slate-800/50 p-3 rounded-xl border border-slate-700 shadow-2xl shadow-slate-900/50">
-                    <i data-lucide="link" class="text-slate-500 w-6 h-6 ml-2"></i>
-                    <input type="text" id="video-url" placeholder="الصق رابط الفيديو هنا..." class="flex-grow bg-transparent text-white placeholder-slate-500 focus:outline-none text-lg p-2">
-                    <button type="submit" id="submit-button" class="glow-button w-full md:w-auto flex items-center justify-center gap-2 bg-indigo-600 text-white font-bold px-8 py-4 rounded-lg hover:bg-indigo-500 transition-all duration-300 transform hover:scale-105">
-                        <span id="button-text">أنشئ المقاطع</span>
-                        <i id="button-icon" data-lucide="sparkles" class="w-5 h-5"></i>
-                    </button>
-                </form>
-            </section>
-            
-            <!-- === Processing Section (Hidden by default) === -->
-            <section id="processing-section" class="w-full max-w-3xl text-center hidden">
-                <div class="flex flex-col items-center justify-center bg-slate-800/50 p-8 rounded-xl border border-slate-700">
-                    <div id="loader" class="w-16 h-16 border-4 border-t-indigo-500 border-slate-700 rounded-full spinner mb-6"></div>
-                    <h3 id="status-text" class="text-2xl font-bold text-white mb-2">جاري المعالجة...</h3>
-                    <p id="status-description" class="text-slate-400">يقوم الذكاء الاصطناعي بتحليل الفيديو. قد يستغرق هذا بضع دقائق.</p>
-                    
-                    <div class="w-full bg-slate-700 rounded-full h-2.5 mt-8">
-                      <div id="progress-bar" class="bg-indigo-600 h-2.5 rounded-full" style="width: 10%"></div>
+        <!-- Main Content -->
+        <main class="w-full md:w-3/4 p-8 overflow-y-auto">
+            <div id="lesson-content">
+                <!-- Welcome Message -->
+                <div class="text-center h-full flex flex-col justify-center items-center">
+                    <h1 class="text-5xl font-bold text-gray-300">أهلاً بك في JS-Quest</h1>
+                    <p class="text-xl text-gray-400 mt-4">اختر درسًا من القائمة على اليمين لبدء رحلتك في عالم جافاسكريبت.</p>
+                    <div class="mt-8">
+                        <svg class="w-32 h-32 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
                     </div>
                 </div>
-            </section>
-
-            <!-- === Results Section (Hidden by default) === -->
-            <section id="results-section" class="w-full max-w-6xl hidden mt-16">
-                 <div class="flex justify-between items-center mb-8">
-                    <h3 class="text-3xl font-bold text-white">المقاطع المقترحة</h3>
-                    <button id="restart-button" class="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-slate-800 rounded-md hover:bg-slate-700 transition-colors">
-                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                        تحليل فيديو آخر
-                    </button>
-                </div>
-                <div id="clips-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <!-- Clip cards will be inserted here by JavaScript -->
-                </div>
-            </section>
+            </div>
         </main>
 
-        <!-- === Footer === -->
-        <footer class="text-center text-slate-500 mt-16">
-            <p>تم بناؤه بواسطة. Akroub</p>
-        </footer>
     </div>
 
-
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            
-            function initializeApp() {
-                // استبدال أيقونات Lucide
-                lucide.createIcons();
+        const appState = {
+            points: 0,
+            currentLessonIndex: -1,
+            lessonsCompleted: 0,
+        };
+        
+        // بيانات الدروس والتحديات
+        const lessons = [
+            {
+                title: "1. المتغيرات (Variables)",
+                explanation: "المتغيرات هي حاويات لتخزين قيم البيانات. في جافاسكريبت، نستخدم الكلمات المفتاحية `let`, `const`, و `var` لإنشاء المتغيرات. `let` للمتغيرات التي يمكن تغيير قيمتها، و `const` للثوابت التي لا تتغير.",
+                example: `let message = "مرحباً بالعالم";\nconsole.log(message);\n\nconst year = 2025;\nconsole.log(year);`,
+                challenge: {
+                    prompt: "قم بإنشاء متغير بإسم `playerName` باستخدام `let` وأعطه قيمة اسمك (كنص). ثم قم بإنشاء ثابت بإسم `score` باستخدام `const` وأعطه القيمة 100. أخيرًا، اطبعهما في الـ console.",
+                    solution: `let playerName = "اسمك";\nconst score = 100;\nconsole.log(playerName);\nconsole.log(score);`,
+                    validate: (output) => output.includes("100") && output.length > 4,
+                }
+            },
+            {
+                title: "2. أنواع البيانات (Data Types)",
+                explanation: "تحتوي جافاسكريبت على أنواع بيانات مختلفة. الأساسية هي: `String` (نص)، `Number` (رقم)، `Boolean` (صواب/خطأ)، `null` (فارغ)، و `undefined` (غير مُعرّف).",
+                example: `let name = "Ali"; // String\nlet age = 30; // Number\nlet isDeveloper = true; // Boolean\n\nconsole.log(typeof name); // سيطبع "string"`,
+                challenge: {
+                    prompt: "أنشئ متغير `currentYear` بقيمة 2025 (Number)، ومتغير `isLearning` بقيمة `true` (Boolean). اطبعهما في الـ console.",
+                    validate: (output) => output.includes("2025") && output.includes("true"),
+                }
+            },
+            {
+                title: "3. الدوال (Functions)",
+                explanation: "الدوال هي كتل من الكود مصممة لأداء مهمة معينة. يمكن استدعاء الدالة لتنفيذ الكود الذي بداخلها. هذا يساعد على تنظيم الكود وإعادة استخدامه.",
+                example: `function greet(name) {\n  console.log("مرحباً, " + name + "!");\n}\n\ngreet("أحمد"); // استدعاء الدالة`,
+                challenge: {
+                    prompt: "اكتب دالة اسمها `addNumbers` تأخذ رقمين كمدخلات (parameters) وتقوم بطباعة مجموعهما في الـ console. ثم قم باستدعاء الدالة مع الرقمين 5 و 10.",
+                    validate: (output) => output.trim() === "15",
+                }
+            },
+            {
+                title: "4. الشروط (Conditional Statements)",
+                explanation: "تُستخدم الشروط لتنفيذ أجزاء مختلفة من الكود بناءً على شرط معين. `if`, `else if`, و `else` هي الأدوات الرئيسية لذلك.",
+                example: `let temp = 25;\n\nif (temp > 30) {\n  console.log("الجو حار جداً");\n} else if (temp > 20) {\n  console.log("الجو معتدل");\n} else {\n  console.log("الجو بارد");\n}`,
+                challenge: {
+                    prompt: "اكتب شرط `if/else`. إذا كان متغير `userScore` أكبر من 50، اطبع 'ناجح'. وإلا، اطبع 'راسب'. قم بتعريف `userScore` بقيمة 75.",
+                    validate: (output) => output.trim().toLowerCase() === "ناجح",
+                }
+            },
+             {
+                title: "5. الحلقات التكرارية (Loops)",
+                explanation: "الحلقات التكرارية تسمح لك بتكرار تنفيذ كتلة من الكود عدة مرات. أشهر أنواعها `for` و `while`.",
+                example: `// طباعة الأرقام من 1 إلى 5\nfor (let i = 1; i <= 5; i++) {\n  console.log(i);\n}`,
+                challenge: {
+                    prompt: "استخدم حلقة `for` لطباعة كلمة 'JavaScript' في الـ console ثلاث مرات.",
+                    validate: (output) => (output.match(/JavaScript/g) || []).length === 3,
+                }
+            }
+        ];
 
-                // === DOM Elements ===
-                const formSection = document.getElementById('form-section');
-                const processingSection = document.getElementById('processing-section');
-                const resultsSection = document.getElementById('results-section');
-                const videoForm = document.getElementById('video-form');
-                const videoUrlInput = document.getElementById('video-url');
-                const submitButton = document.getElementById('submit-button');
-                const buttonText = document.getElementById('button-text');
-                const buttonIcon = document.getElementById('button-icon');
-                const statusText = document.getElementById('status-text');
-                const statusDescription = document.getElementById('status-description');
-                const progressBar = document.getElementById('progress-bar');
-                const clipsGrid = document.getElementById('clips-grid');
-                const restartButton = document.getElementById('restart-button');
+        const ui = {
+            lessonsList: document.getElementById('lessons-list'),
+            lessonContent: document.getElementById('lesson-content'),
+            pointsDisplay: document.getElementById('points'),
+            levelDisplay: document.getElementById('level'),
+        };
 
-                // === State and Data ===
+        function init() {
+            renderLessonsList();
+            updateProgress();
+        }
 
-                // بيانات مقاطع فيديو وهمية لمحاكاة استجابة الواجهة الخلفية
-                const mockClipsData = [
-                    {
-                        thumbnailUrl: 'https://placehold.co/600x400/6366F1/FFFFFF?text=مقطع+1',
-                        title: 'سر الإنتاجية الذي لا يخبرك به أحد',
-                        score: 98,
-                        duration: '0:45',
-                    },
-                    {
-                        thumbnailUrl: 'https://placehold.co/600x400/8B5CF6/FFFFFF?text=مقطع+2',
-                        title: 'لماذا تفشل معظم المشاريع في أول 90 يومًا؟',
-                        score: 95,
-                        duration: '1:12',
-                    },
-                    {
-                        thumbnailUrl: 'https://placehold.co/600x400/EC4899/FFFFFF?text=مقطع+3',
-                        title: 'خطأ واحد يكلف المبرمجين ساعات من العمل',
-                        score: 92,
-                        duration: '0:58',
-                    },
-                    {
-                        thumbnailUrl: 'https://placehold.co/600x400/F59E0B/FFFFFF?text=مقطع+4',
-                        title: 'كيف تتعلم أي مهارة بسرعة فائقة؟',
-                        score: 89,
-                        duration: '1:25',
-                    },
-                    {
-                        thumbnailUrl: 'https://placehold.co/600x400/10B981/FFFFFF?text=مقطع+5',
-                        title: 'أفضل استثمار يمكنك القيام به في العشرينات',
-                        score: 88,
-                        duration: '0:38',
-                    },
-                    {
-                        thumbnailUrl: 'https://placehold.co/600x400/3B82F6/FFFFFF?text=مقطع+6',
-                        title: 'هذا ما يفعله الأثرياء بشكل مختلف',
-                        score: 85,
-                        duration: '1:05',
-                    }
-                ];
+        function renderLessonsList() {
+            ui.lessonsList.innerHTML = '';
+            lessons.forEach((lesson, index) => {
+                const isLocked = index > appState.lessonsCompleted;
+                const li = document.createElement('li');
+                li.className = `p-3 rounded-lg cursor-pointer transition-all duration-200 ${isLocked ? 'lesson-item locked bg-gray-700' : 'bg-gray-700 hover:bg-cyan-800 hover:text-white'}`;
+                li.textContent = lesson.title;
+                
+                const lockIcon = document.createElement('span');
+                lockIcon.className = 'lock-icon float-left';
+                lockIcon.innerHTML = '🔒';
+                li.appendChild(lockIcon);
 
-                // مراحل المعالجة المحاكية
-                const processingSteps = [
-                    { progress: 10, text: 'جاري بدء المهمة...', description: 'يتم الآن تهيئة بيئة العمل.' },
-                    { progress: 25, text: 'تنزيل الفيديو الأصلي...', description: 'يتم سحب الفيديو من المصدر لتحليله.' },
-                    { progress: 50, text: 'تحويل الكلام إلى نص...', description: 'يقوم الذكاء الاصطناعي بتفريغ المحتوى الصوتي بدقة.' },
-                    { progress: 75, text: 'تحليل واكتشاف اللحظات...', description: 'يتم تقييم كل جزء لتحديد إمكانية انتشاره.' },
-                    { progress: 90, text: 'إنشاء المقاطع النهائية...', description: 'يتم الآن قص وتجهيز المقاطع الذهبية.' },
-                    { progress: 100, text: 'اكتملت المعالجة!', description: 'مقاطعك جاهزة للعرض.' },
-                ];
-
-
-                // === Functions ===
-
-                /**
-                 * محاكاة عملية معالجة الفيديو في الواجهة الخلفية.
-                 */
-                async function simulateBackendProcessing() {
-                    for (let i = 0; i < processingSteps.length; i++) {
-                        const step = processingSteps[i];
-                        progressBar.style.width = `${step.progress}%`;
-                        statusText.textContent = step.text;
-                        statusDescription.textContent = step.description;
-                        await new Promise(resolve => setTimeout(resolve, 1500)); // انتظر 1.5 ثانية لكل خطوة
-                    }
-                    displayResults();
+                if (!isLocked) {
+                    li.onclick = () => selectLesson(index);
                 }
                 
-                /**
-                 * إنشاء وعرض بطاقات المقاطع في الشبكة.
-                 */
-                function displayResults() {
-                    clipsGrid.innerHTML = ''; // مسح النتائج القديمة
-                    mockClipsData.forEach((clip, index) => {
-                        const clipCard = `
-                            <div class="bg-slate-800 rounded-xl overflow-hidden shadow-lg transform hover:-translate-y-2 transition-transform duration-300 fade-in" style="animation-delay: ${index * 100}ms;">
-                                <div class="relative">
-                                    <img src="${clip.thumbnailUrl}" alt="Thumbnail for ${clip.title}" class="w-full h-48 object-cover">
-                                    <div class="absolute top-2 left-2 bg-slate-900/50 text-white text-xs px-2 py-1 rounded-md">${clip.duration}</div>
-                                    <div class="absolute top-2 right-2 flex items-center gap-1 bg-slate-900/50 text-white text-xs px-2 py-1 rounded-md">
-                                        <i data-lucide="bar-chart-2" class="w-3 h-3 text-green-400"></i>
-                                        <span>تقييم الانتشار: ${clip.score}</span>
-                                    </div>
-                                </div>
-                                <div class="p-4">
-                                    <h4 class="font-bold text-lg text-white mb-4">${clip.title}</h4>
-                                    <div class="flex gap-2">
-                                        <button class="flex-1 flex items-center justify-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-500 transition-colors text-sm">
-                                            <i data-lucide="download" class="w-4 h-4"></i>
-                                            <span>تحميل</span>
-                                        </button>
-                                        <button class="flex-1 flex items-center justify-center gap-2 bg-slate-700 text-white px-4 py-2 rounded-md hover:bg-slate-600 transition-colors text-sm">
-                                            <i data-lucide="edit-3" class="w-4 h-4"></i>
-                                            <span>تعديل</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        clipsGrid.innerHTML += clipCard;
-                    });
-                    
-                    processingSection.classList.add('hidden');
-                    resultsSection.classList.remove('hidden');
-                    lucide.createIcons(); // إعادة تفعيل الأيقونات الجديدة
-                }
+                ui.lessonsList.appendChild(li);
+            });
+        }
+        
+        function selectLesson(index) {
+            appState.currentLessonIndex = index;
+            const lesson = lessons[index];
+            
+            ui.lessonContent.innerHTML = `
+                <h1 class="text-4xl font-bold text-cyan-400 mb-4">${lesson.title}</h1>
+                <p class="text-lg text-gray-300 leading-relaxed mb-6">${lesson.explanation}</p>
+                
+                <h2 class="text-2xl font-semibold mb-3">مثال توضيحي:</h2>
+                <div class="code-block text-gray-200 mb-8">
+                    <pre><code>${lesson.example}</code></pre>
+                </div>
+                
+                <h2 class="text-2xl font-semibold mb-3 text-yellow-400">التحدي:</h2>
+                <p class="text-lg text-gray-300 mb-4">${lesson.challenge.prompt}</p>
+                
+                <textarea id="code-editor" class="w-full h-48 p-4 rounded-lg bg-gray-800 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-500 font-mono text-lg" style="direction: ltr; text-align: left;"></textarea>
+                
+                <div class="my-4">
+                    <button id="run-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">تشغيل الكود</button>
+                    <button id="submit-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition-colors mr-3">تسليم الحل</button>
+                </div>
 
-                /**
-                 * التعامل مع تقديم النموذج.
-                 * @param {Event} e - The form submission event.
-                 */
-                function handleFormSubmit(e) {
-                    e.preventDefault();
-                    const url = videoUrlInput.value.trim();
+                <h2 class="text-2xl font-semibold mb-3">الـ Console:</h2>
+                <div id="console-output" class="console-output"></div>
+            `;
+            
+            document.getElementById('run-btn').onclick = runCode;
+            document.getElementById('submit-btn').onclick = submitChallenge;
+        }
 
-                    // تحقق بسيط من الرابط
-                    if (!url || !url.startsWith('http')) {
-                        alert('الرجاء إدخال رابط فيديو صالح.');
-                        return;
+        function runCode() {
+            const code = document.getElementById('code-editor').value;
+            const consoleOutput = document.getElementById('console-output');
+            consoleOutput.innerHTML = ''; 
+
+            const originalLog = console.log;
+            let capturedOutput = '';
+            console.log = (...args) => {
+                capturedOutput += args.map(arg => typeof arg === 'object' ? JSON.stringify(arg) : arg).join(' ') + '\n';
+            };
+
+            try {
+                eval(code);
+                consoleOutput.textContent = capturedOutput || '(لا يوجد خرج)';
+            } catch (error) {
+                consoleOutput.innerHTML = `<span class="error">${error}</span>`;
+            } finally {
+                console.log = originalLog;
+            }
+        }
+        
+        function submitChallenge() {
+            const code = document.getElementById('code-editor').value;
+            const consoleOutput = document.getElementById('console-output');
+            const lesson = lessons[appState.currentLessonIndex];
+
+            const originalLog = console.log;
+            let capturedOutput = '';
+            console.log = (...args) => {
+                 capturedOutput += args.map(arg => typeof arg === 'object' ? JSON.stringify(arg) : arg).join(' ') + '\n';
+            };
+
+            try {
+                eval(code);
+                const isCorrect = lesson.challenge.validate(capturedOutput);
+
+                if (isCorrect) {
+                    consoleOutput.innerHTML = `<span class="success">رائع! إجابة صحيحة. لقد ربحت 100 نقطة.</span>`;
+                    // Check if this lesson was just completed for the first time
+                    if (appState.currentLessonIndex === appState.lessonsCompleted) {
+                        appState.points += 100;
+                        appState.lessonsCompleted++;
+                        updateProgress();
+                        renderLessonsList();
                     }
-
-                    // تحديث واجهة المستخدم لبدء المعالجة
-                    submitButton.disabled = true;
-                    buttonText.textContent = 'جاري المعالجة...';
-                    buttonIcon.remove();
-                    const loaderIcon = document.createElement('div');
-                    loaderIcon.className = 'w-5 h-5 border-2 border-t-transparent rounded-full spinner';
-                    submitButton.appendChild(loaderIcon);
-
-                    formSection.classList.add('hidden');
-                    processingSection.classList.remove('hidden');
-
-                    simulateBackendProcessing();
-                }
-
-                /**
-                 * إعادة تعيين الواجهة إلى حالتها الأولية.
-                 */
-                function resetInterface() {
-                    resultsSection.classList.add('hidden');
-                    formSection.classList.remove('hidden');
-                    videoUrlInput.value = '';
-                    
-                    // إعادة الزر لحالته الأصلية
-                    submitButton.disabled = false;
-                    buttonText.textContent = 'أنشئ المقاطع';
-                    submitButton.querySelector('.spinner')?.remove();
-                    submitButton.appendChild(buttonIcon);
-                }
-
-
-                // === Event Listeners ===
-                videoForm.addEventListener('submit', handleFormSubmit);
-                restartButton.addEventListener('click', resetInterface);
-            }
-
-            function waitForLucide() {
-                if (typeof lucide !== 'undefined') {
-                    initializeApp();
                 } else {
-                    setTimeout(waitForLucide, 100);
+                    consoleOutput.innerHTML = `<span class="error">إجابة غير صحيحة. حاول مرة أخرى.</span><br>${capturedOutput}`;
                 }
-            }
 
-            waitForLucide();
-        });
+            } catch (error) {
+                consoleOutput.innerHTML = `<span class="error">خطأ في الكود: ${error}</span>`;
+            } finally {
+                console.log = originalLog;
+            }
+        }
+        
+        function updateProgress() {
+            ui.pointsDisplay.textContent = `${appState.points} نقطة`;
+            
+            let level = "مبتدئ";
+            if (appState.points >= 400) level = "متمرس";
+            else if (appState.points >= 200) level = "متوسط";
+            
+            ui.levelDisplay.textContent = level;
+        }
+
+        init();
     </script>
 </body>
 </html>
-
