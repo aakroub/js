@@ -118,7 +118,6 @@
                 example: `let message = "مرحباً بالعالم";\nconsole.log(message);\n\nconst year = 2025;\nconsole.log(year);`,
                 challenge: {
                     prompt: "قم بإنشاء متغير بإسم `playerName` باستخدام `let` وأعطه قيمة اسمك (كنص). ثم قم بإنشاء ثابت بإسم `score` باستخدام `const` وأعطه القيمة 100. أخيرًا، اطبعهما في الـ console.",
-                    solution: `let playerName = "اسمك";\nconst score = 100;\nconsole.log(playerName);\nconsole.log(score);`,
                     validate: (output) => output.includes("100") && output.length > 4,
                 }
             },
@@ -149,13 +148,58 @@
                     validate: (output) => output.trim().toLowerCase() === "ناجح",
                 }
             },
-             {
+            {
                 title: "5. الحلقات التكرارية (Loops)",
                 explanation: "الحلقات التكرارية تسمح لك بتكرار تنفيذ كتلة من الكود عدة مرات. أشهر أنواعها `for` و `while`.",
                 example: `// طباعة الأرقام من 1 إلى 5\nfor (let i = 1; i <= 5; i++) {\n  console.log(i);\n}`,
                 challenge: {
                     prompt: "استخدم حلقة `for` لطباعة كلمة 'JavaScript' في الـ console ثلاث مرات.",
                     validate: (output) => (output.match(/JavaScript/g) || []).length === 3,
+                }
+            },
+            {
+                title: "6. المصفوفات (Arrays)",
+                explanation: "المصفوفات هي نوع خاص من المتغيرات يمكنه تخزين عدة قيم في مكان واحد. يمكن الوصول إلى عناصر المصفوفة باستخدام رقم الفهرس (index) الذي يبدأ من 0.",
+                example: `let fruits = ["تفاح", "موز", "برتقال"];\nconsole.log(fruits[0]); // سيطبع "تفاح"\n\nfruits.push("مانجو"); // إضافة عنصر جديد\nconsole.log(fruits.length); // سيطبع 4`,
+                challenge: {
+                    prompt: "أنشئ مصفوفة اسمها `skills` تحتوي على ثلاث مهارات برمجية تعرفها (كنصوص). ثم قم بطباعة العنصر الثاني في المصفوفة.",
+                    validate: (output) => output.trim().length > 1 && !output.includes("["),
+                }
+            },
+            {
+                title: "7. الكائنات (Objects)",
+                explanation: "الكائنات هي حاويات لقيم مسماة تسمى خصائص (properties). تستخدم لتمثيل كيانات العالم الحقيقي، مثل سيارة أو شخص، بخصائصها وسلوكياتها.",
+                example: `let car = {\n  type: "Fiat",\n  model: "500",\n  color: "white"\n};\n\nconsole.log(car.type); // سيطبع "Fiat"`,
+                challenge: {
+                    prompt: "أنشئ كائنًا اسمه `user` له خاصيتان: `name` بقيمة اسمك، و `age` بقيمة عمرك. ثم اطبع قيمة `name` في الـ console.",
+                    validate: (output) => output.trim().length > 1 && !output.includes("{"),
+                }
+            },
+            {
+                title: "8. التعامل مع DOM",
+                explanation: "نموذج كائن المستند (DOM) هو واجهة برمجية لصفحات الويب. يسمح لنا بتغيير محتوى وهيكل الصفحة باستخدام JavaScript. يمكننا تحديد العناصر باستخدام `document.getElementById` أو `document.querySelector`.",
+                example: `// HTML: <h1 id="title">Hello</h1>\n\nlet pageTitle = document.getElementById("title");\nconsole.log(pageTitle.textContent); // سيطبع "Hello"`,
+                challenge: {
+                    prompt: "افترض أن الصفحة تحتوي على عنصر `<p id='message'>مرحباً</p>`. اكتب كود JavaScript لتحديد هذا العنصر وتغيير محتواه النصي إلى 'أهلاً جافاسكريبت'. (ملاحظة: لن ترى التغيير في هذه الصفحة، لكن الكود يجب أن يكون صحيحًا).",
+                    validate: (output) => output.includes("getElementById") || output.includes("querySelector"),
+                }
+            },
+            {
+                title: "9. الأحداث (Events)",
+                explanation: "الأحداث هي الإجراءات التي تحدث في صفحة الويب، مثل نقرة الماوس أو ضغطة المفتاح. يمكننا كتابة كود JavaScript للاستجابة لهذه الأحداث باستخدام `addEventListener`.",
+                example: `// HTML: <button id="myBtn">Click me</button>\n\nlet button = document.getElementById("myBtn");\nbutton.addEventListener("click", function() {\n  console.log("تم النقر على الزر!");\n});`,
+                challenge: {
+                    prompt: "اكتب الكود اللازم لإضافة مستمع حدث (event listener) إلى زر له `id` يساوي `testButton`. عند النقر على الزر، يجب أن يطبع 'تم الاختبار بنجاح' في الـ console.",
+                    validate: (output) => output.includes("addEventListener") && output.includes("click"),
+                }
+            },
+            {
+                title: "10. دوال السهم (Arrow Functions)",
+                explanation: "دوال السهم هي طريقة مختصرة لكتابة الدوال في JavaScript، تم تقديمها في ES6. إنها تجعل الكود أقصر وأكثر قابلية للقراءة.",
+                example: `// دالة عادية\nfunction add(a, b) {\n  return a + b;\n}\n\n// دالة سهم\nconst addArrow = (a, b) => a + b;\n\nconsole.log(addArrow(2, 3)); // سيطبع 5`,
+                challenge: {
+                    prompt: "حول الدالة العادية التالية إلى دالة سهم: `function multiply(x, y) { return x * y; }`. قم بتسمية دالة السهم `multiplyArrow` واستدعها مع الرقمين 4 و 5.",
+                    validate: (output) => output.includes("=>") && output.includes("20"),
                 }
             }
         ];
@@ -236,6 +280,18 @@
             };
 
             try {
+                // For DOM challenges, we create dummy elements to avoid errors
+                if (appState.currentLessonIndex === 7) {
+                    const dummyP = document.createElement('p');
+                    dummyP.id = 'message';
+                    document.body.appendChild(dummyP);
+                }
+                 if (appState.currentLessonIndex === 8) {
+                    const dummyBtn = document.createElement('button');
+                    dummyBtn.id = 'testButton';
+                    document.body.appendChild(dummyBtn);
+                }
+
                 eval(code);
                 consoleOutput.textContent = capturedOutput || '(لا يوجد خرج)';
             } catch (error) {
@@ -257,14 +313,19 @@
             };
 
             try {
-                eval(code);
-                const isCorrect = lesson.challenge.validate(capturedOutput);
+                let isCorrect = false;
+                 // Special validation for DOM challenges
+                if (appState.currentLessonIndex === 7 || appState.currentLessonIndex === 8) {
+                    isCorrect = lesson.challenge.validate(code);
+                } else {
+                    eval(code);
+                    isCorrect = lesson.challenge.validate(capturedOutput);
+                }
 
                 if (isCorrect) {
-                    consoleOutput.innerHTML = `<span class="success">رائع! إجابة صحيحة. لقد ربحت 100 نقطة.</span>`;
-                    // Check if this lesson was just completed for the first time
+                    consoleOutput.innerHTML = `<span class="success">رائع! إجابة صحيحة. لقد ربحت 350 نقطة.</span>`;
                     if (appState.currentLessonIndex === appState.lessonsCompleted) {
-                        appState.points += 100;
+                        appState.points += 350;
                         appState.lessonsCompleted++;
                         updateProgress();
                         renderLessonsList();
@@ -284,9 +345,12 @@
             ui.pointsDisplay.textContent = `${appState.points} نقطة`;
             
             let level = "مبتدئ";
-            if (appState.points >= 400) level = "متمرس";
-            else if (appState.points >= 200) level = "متوسط";
-            
+            if (appState.points >= 3500) level = "ساحر جافاسكريبت";
+            else if (appState.points >= 2450) level = "خبير";
+            else if (appState.points >= 1400) level = "متمرس";
+            else if (appState.points >= 700) level = "متوسط";
+            else if (appState.points >= 350) level = "متعلم";
+
             ui.levelDisplay.textContent = level;
         }
 
@@ -294,3 +358,4 @@
     </script>
 </body>
 </html>
+
